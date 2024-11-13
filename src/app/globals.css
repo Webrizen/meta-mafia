@@ -23,6 +23,12 @@ background-image: radial-gradient(at 70% 5%, #254336 0%, transparent 60%), radia
   background-image: radial-gradient(at 36% 81%, #feffd2 0%, transparent 60%), radial-gradient(at 57% 35%, #ffeea9 0%, transparent 50%), radial-gradient(at 92% 61%, #ffbf78 0%, transparent 40%), radial-gradient(at 20% 80%, #ff7d29 0%, transparent 30%);
 }
 
+.bg-card-0{
+
+  background: radial-gradient(at 88% 49%, #35155d 0px, transparent 50%), radial-gradient(at 98% 8%, #512b81 0px, transparent 50%), radial-gradient(at 36% 29%, #4477ce 0px, transparent 50%), radial-gradient(at 95% 8%, #8cabff 0px, transparent 50%), #35155d;
+    
+}
+
 .bg-card-1{
   background-color: #074173;
 background-image: radial-gradient(at 69% 99%, #074173 0%, transparent 60%), radial-gradient(at 42% 20%, #1679ab 0%, transparent 50%), radial-gradient(at 13% 8%, #5debd7 0%, transparent 40%), radial-gradient(at 59% 2%, #c5ff95 0%, transparent 30%);

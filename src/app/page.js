@@ -8,10 +8,14 @@ import {
   Code,
   Languages,
   CheckIcon,
+  CircleArrowRight,
+  Files,
+  Settings,
 } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
+import HowItWorks from "@/components/system/how-it-works";
 
 const Step = ({ title }) => (
   <li className="flex gap-2 items-start my-2">
@@ -33,7 +37,7 @@ const shuffleArray = (array) => {
 export default function Home() {
   const features = [
     {
-      icon: <Cpu className="h-8 w-8 text-primary" />,
+      icon: <Cpu className="h-8 w-8 text-orange-600" />,
       title: "AI-Powered Metadata",
       description:
         "Leverage OpenAI's advanced language models to generate intelligent, context-aware SEO metadata. Automatically craft meta titles, descriptions, and keywords that resonate with your audience while adhering to SEO best practices. Save hours of manual effort and focus on what matters most—building your project.",
@@ -41,7 +45,7 @@ export default function Home() {
       className: "md:col-span-2 md:row-span-1",
     },
     {
-      icon: <Code className="h-8 w-8 text-primary" />,
+      icon: <Code className="h-8 w-8 text-orange-600" />,
       title: "Next.js Integration",
       description:
         "Seamlessly integrate with Next.js projects for automatic metadata injection and optimization. Save development time with pre-built configurations tailored to Next.js 14, ensuring a smooth workflow and reliable performance.",
@@ -49,7 +53,7 @@ export default function Home() {
       className: "md:col-span-1 md:row-span-1",
     },
     {
-      icon: <Search className="h-8 w-8 text-primary" />,
+      icon: <Search className="h-8 w-8 text-orange-600" />,
       title: "Advanced SEO",
       description:
         "Generate comprehensive metadata including meta titles, descriptions, Open Graph properties for enhanced social sharing, and structured data with JSON-LD schemas to boost your search engine rankings. Ensure your website stands out in search results with precision-crafted SEO tags for every page.",
@@ -68,7 +72,7 @@ export default function Home() {
       className: "md:col-span-1 md:row-span-2",
     },
     {
-      icon: <Globe className="h-8 w-8 text-primary" />,
+      icon: <Globe className="h-8 w-8 text-orange-600" />,
       title: "Internationalization",
       description:
         "Support for multiple languages and regions, ensuring global SEO optimization. Tailor your metadata for diverse audiences worldwide, enhancing user experience and improving rankings across different search engines and geographies.",
@@ -76,7 +80,7 @@ export default function Home() {
       className: "md:col-span-1 md:row-span-1",
     },
     {
-      icon: <Rocket className="h-8 w-8 text-primary" />,
+      icon: <Rocket className="h-8 w-8 text-orange-600" />,
       title: "Performance Optimization",
       description:
         "Lightweight metadata generation that doesn't compromise your site's speed and performance. Ensure faster page loads and seamless rendering without bloating your codebase, making your site highly efficient and user-friendly.",
@@ -84,7 +88,7 @@ export default function Home() {
       className: "md:col-span-1 md:row-span-1",
     },
     {
-      icon: <Languages className="h-8 w-8 text-primary" />,
+      icon: <Languages className="h-8 w-8 text-orange-600" />,
       title: "Dynamic Content Adaptation",
       description:
         "Automatically adjust metadata based on page content, user behavior, and context. Adapt dynamically to visitor needs and search engine preferences, delivering highly relevant and impactful SEO content that improves visibility and engagement.",
@@ -104,8 +108,8 @@ export default function Home() {
 
   return (
     <>
-      <section className="py-32 md:min-h-min min-h-screen dark-bg-custom relative">
-        <div className="container mx-auto text-center">
+      <section className="py-32 dark-bg-custom relative">
+        <div className="container mx-auto text-center md:px-0 px-5">
           <div className="mx-auto flex max-w-screen-lg flex-col gap-6">
             <h1 className="text-3xl font-extrabold lg:text-6xl text-slate-50">
               Let Meta Mafia handle your SEO so you can pretend you worked hard.
@@ -170,9 +174,9 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 w-full  overflow-hidden">
+        <div className="md:absolute hidden bottom-0 left-0 w-full overflow-hidden">
           <svg
-            className="relative block w-full h-[130px] dark:text-[#121212] text-white"
+            className="relative block w-full md:h-[130px] dark:text-[#121212] text-white"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 1440 100"
             preserveAspectRatio="none"
@@ -189,7 +193,7 @@ export default function Home() {
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold tracking-tight sm:text-5xl mb-4">
               Unleash the Power of{" "}
-              <span className="text-primary">MetaMaifia</span>
+              <span className="text-orange-600">MetaMaifia</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Revolutionize your Next.js SEO strategy with AI-driven metadata
@@ -199,30 +203,109 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-3 gap-4">
             {features.map((feature, index) => {
               const assignedClass = randomClasses[index % randomClasses.length];
-             return(
-              <Card
-                key={index}
-                className={`bg-card hover:shadow-lg transition-shadow duration-300 ${feature.className} ${assignedClass}`}
-              >
-                <CardHeader className="flex flex-row items-center space-x-4">
-                  <div className="bg-primary/10 p-3 rounded-full bg-white text-orange-500 border-2 border-slate-300">
-                    {feature.icon}
-                  </div>
-                  <CardTitle className="text-xl text-white">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-slate-200 mb-4">
-                    {feature.description}
-                  </p>
-                  {feature.description2 && (
-                    <div className="text-slate-300 mb-4">
-                      {feature.description2}
+              return (
+                <Card
+                  key={index}
+                  className={`bg-card hover:shadow-lg transition-shadow duration-300 ${feature.className} ${assignedClass}`}
+                >
+                  <CardHeader className="flex flex-row items-center space-x-4">
+                    <div className="bg-primary/10 p-3 rounded-full bg-white text-orange-500 border-2 border-slate-300">
+                      {feature.icon}
                     </div>
-                  )}
-                  <Badge variant="secondary">{feature.badge}</Badge>
-                </CardContent>
-              </Card>
-            )})}
+                    <CardTitle className="text-xl text-white">
+                      {feature.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-slate-200 mb-4">{feature.description}</p>
+                    {feature.description2 && (
+                      <div className="text-slate-300 mb-4">
+                        {feature.description2}
+                      </div>
+                    )}
+                    <Badge variant="secondary">{feature.badge}</Badge>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+      <HowItWorks />
+      <section className="py-20 bg-gradient-to-b from-background to-secondary/20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-5xl mb-4">
+              About <span className="text-orange-600">Meta Mafia</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              At Meta Mafia, we simplify SEO for developers and creators.
+              Automate your metadata generation and focus on what matters.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex justify-center w-full h-min">
+              <img
+                src="https://placehold.co/500x500"
+                alt="About Meta Mafia"
+                className="rounded-lg border-2 w-full h-full dark:border-slate-800 border-slate-300"
+              />
+            </div>
+            <div className="flex flex-col gap-3 w-full">
+              <p className="text-lg text-muted-foreground mb-3">
+                At Meta Mafia, we empower developers and businesses to optimize
+                their websites with AI-driven metadata solutions. Our platform
+                automates SEO workflows, ensuring precision, efficiency, and
+                superior results. Built with cutting-edge technology, Meta Mafia
+                simplifies SEO, so you can focus on growing your brand and
+                reaching a global audience.
+              </p>
+
+              <p className="text-lg text-muted-foreground mb-3">
+                Our mission is to empower developers and businesses to achieve
+                outstanding digital visibility. Metadata is the unsung hero of
+                search engine optimization, and Meta Mafia ensures it gets the
+                spotlight it deserves. Whether you’re looking to boost rankings,
+                enhance social sharing, or improve site discoverability, we’ve
+                got you covered.
+              </p>
+
+              <p className="text-lg text-muted-foreground mb-3">
+                Meta Mafia was founded by a passionate developer, Arshahdul Ahmed who recognized
+                the challenges faced by businesses and developers in optimizing
+                their websites for search engines. With years of experience in
+                web development and a vision to simplify complex SEO workflows,
+                they created Meta Mafia to bring AI and automation to the
+                forefront of metadata generation.
+              </p>
+              <p className="text-lg text-muted-foreground">
+                Under their leadership, Meta Mafia has grown into a trusted
+                platform for developers and businesses alike, setting a new
+                standard for efficient and effective SEO practices.
+              </p>
+
+              {/* Mission and Vision Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className={`bg-card-1 text-slate-100 p-4 rounded-lg`}>
+                  <Globe className="w-6 h-6 mb-2" />
+                  <p className="font-medium">Our Mission</p>
+                  <p className="text-sm text-slate-300">
+                    To revolutionize the SEO landscape by providing effortless,
+                    AI-driven metadata solutions that enable developers and
+                    creators to achieve their goals with ease.
+                  </p>
+                </div>
+                <div className={`bg-card-4 text-slate-100 p-4 rounded-lg`}>
+                  <Rocket className="w-6 h-6 mb-2" />
+                  <p className="font-medium">Our Vision</p>
+                  <p className="text-sm text-slate-300">
+                    To become the leading platform for automated SEO solutions,
+                    helping businesses and developers worldwide achieve
+                    unparalleled digital success.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
