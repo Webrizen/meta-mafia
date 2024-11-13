@@ -2,12 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer base {
   :root {
     --radius: 0.5rem;
   }
+}
+
+.cl-avatarBox {
+  width: 2.20rem;
+  height: 2.20rem;
+}
+
+.dark-bg-custom{
+  background-color: #254336;
+background-image: radial-gradient(at 70% 5%, #254336 0%, transparent 60%), radial-gradient(at 76% 74%, #6b8a7a 0%, transparent 50%), radial-gradient(at 86% 0%, #b7b597 0%, transparent 40%), radial-gradient(at 84% 1%, #dad3be 0%, transparent 30%);
+}
+
+.light-bg-custom{
+  background-color: #feffd2;
+  background-image: radial-gradient(at 36% 81%, #feffd2 0%, transparent 60%), radial-gradient(at 57% 35%, #ffeea9 0%, transparent 50%), radial-gradient(at 92% 61%, #ffbf78 0%, transparent 40%), radial-gradient(at 20% 80%, #ff7d29 0%, transparent 30%);
 }

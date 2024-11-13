@@ -2,6 +2,8 @@ import Navbar from "@/components/system/Navbar";
 import "./globals.css";
 import { DM_Sans } from "next/font/google";
 import { ThemeProviderMafia } from "@/components/providers/theme-provider";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 
 const dM_Sans = DM_Sans({
   weights: ["100", "200", "300", "400", "500", "600", "800", "900", "1000"],
@@ -9,11 +11,11 @@ const dM_Sans = DM_Sans({
 });
 
 export const metadata = {
-  title: "Meta Mafia - Automated SEO Metadata for Next.js 14",
+  title: "Meta Mafia - Automated SEO Metadata for Next.js website",
   description:
-    "Meta Mafia empowers developers to easily generate SEO-optimized metadata code for Next.js 14 websites. Just input your website data, and let AI handle the rest!",
+    "Meta Mafia empowers developers to easily generate SEO-optimized metadata code for Next.js project websites. Just input your website data, and let AI handle the rest!",
   keywords:
-    "SEO, metadata generation, Next.js 14, Meta Mafia, SEO tools, automated SEO, website optimization, OpenAI API",
+    "SEO, metadata generation, Next.js project, Meta Mafia, SEO tools, automated SEO, website optimization, OpenAI API",
   author: "Meta Mafia Team",
   robots: "index, follow",
   openGraph: {
@@ -35,16 +37,22 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={dM_Sans.className}>
-        <ThemeProviderMafia
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
+        <ClerkProvider
+          appearance={{
+            baseTheme: dark,
+          }}
         >
-          <Navbar />
-          {children}
-        </ThemeProviderMafia>
+          <ThemeProviderMafia
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+          >
+            <Navbar />
+            {children}
+          </ThemeProviderMafia>
+        </ClerkProvider>
       </body>
     </html>
   );
