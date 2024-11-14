@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Code, Globe, Zap, Sparkles, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function HowItWorks() {
   const [activeStep, setActiveStep] = useState(0);
@@ -87,7 +85,7 @@ export const metadata = {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           <div className="space-y-8">
             {steps.map((step, index) => (
-              <motion.div
+              <div
                 key={index}
                 className={`flex items-center space-x-4 p-4 rounded-lg cursor-pointer transition-colors ${
                   activeStep === index
@@ -106,7 +104,7 @@ export const metadata = {
                   </p>
                 </div>
                 <ChevronRight className="w-6 h-6 ml-auto" />
-              </motion.div>
+              </div>
             ))}
           </div>
           <div className="lg:sticky lg:top-24">

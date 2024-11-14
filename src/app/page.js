@@ -8,11 +8,8 @@ import {
   Code,
   Languages,
   CheckIcon,
-  CircleArrowRight,
-  Files,
-  Settings,
 } from "lucide-react";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import HowItWorks from "@/components/system/how-it-works";
@@ -129,34 +126,24 @@ export default function Home() {
           <div className="mx-auto mt-10 flex w-fit flex-col items-center gap-4 sm:flex-row">
             <span className="mx-4 inline-flex items-center -space-x-4">
               <Avatar className="size-14 border">
-                <AvatarImage
-                  src="https://www.shadcnblocks.com/images/block/avatar-1.webp"
-                  alt="User Avatar 1"
-                />
+                <AvatarImage src="https://i.pravatar.cc/300" />
+                <AvatarFallback>N/A</AvatarFallback>
               </Avatar>
               <Avatar className="size-14 border">
-                <AvatarImage
-                  src="https://www.shadcnblocks.com/images/block/avatar-2.webp"
-                  alt="User Avatar 2"
-                />
+                <AvatarImage src="https://i.pravatar.cc/301" />
+                <AvatarFallback>N/A</AvatarFallback>
               </Avatar>
               <Avatar className="size-14 border">
-                <AvatarImage
-                  src="https://www.shadcnblocks.com/images/block/avatar-3.webp"
-                  alt="User Avatar 3"
-                />
+                <AvatarImage src="https://i.pravatar.cc/302" />
+                <AvatarFallback>N/A</AvatarFallback>
               </Avatar>
               <Avatar className="size-14 border">
-                <AvatarImage
-                  src="https://www.shadcnblocks.com/images/block/avatar-4.webp"
-                  alt="User Avatar 4"
-                />
+                <AvatarImage src="https://i.pravatar.cc/303" />
+                <AvatarFallback>N/A</AvatarFallback>
               </Avatar>
               <Avatar className="size-14 border">
-                <AvatarImage
-                  src="https://www.shadcnblocks.com/images/block/avatar-5.webp"
-                  alt="User Avatar 5"
-                />
+                <AvatarImage src="https://i.pravatar.cc/304" />
+                <AvatarFallback>N/A</AvatarFallback>
               </Avatar>
             </span>
             <div>
@@ -174,7 +161,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="md:absolute hidden bottom-0 left-0 w-full overflow-hidden">
+        <div className="absolute md:block hidden bottom-0 left-0 w-full overflow-hidden">
           <svg
             className="relative block w-full md:h-[130px] dark:text-[#121212] text-white"
             xmlns="http://www.w3.org/2000/svg"
@@ -271,12 +258,12 @@ export default function Home() {
               </p>
 
               <p className="text-lg text-muted-foreground mb-3">
-                Meta Mafia was founded by a passionate developer, Arshahdul Ahmed who recognized
-                the challenges faced by businesses and developers in optimizing
-                their websites for search engines. With years of experience in
-                web development and a vision to simplify complex SEO workflows,
-                they created Meta Mafia to bring AI and automation to the
-                forefront of metadata generation.
+                Meta Mafia was founded by a passionate developer, Arshahdul
+                Ahmed who recognized the challenges faced by businesses and
+                developers in optimizing their websites for search engines. With
+                years of experience in web development and a vision to simplify
+                complex SEO workflows, they created Meta Mafia to bring AI and
+                automation to the forefront of metadata generation.
               </p>
               <p className="text-lg text-muted-foreground">
                 Under their leadership, Meta Mafia has grown into a trusted
