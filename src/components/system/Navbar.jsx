@@ -30,7 +30,7 @@ const Navbar = () => {
       <div className="md:container mx-auto flex justify-between items-center">
         <Link
           href="/"
-          className="md:h-8 h-10 md:w-auto w-full flex gap-2 justify-start mr-8 items-center p-1 rounded-md hover:bg-[rgba(225,225,225,0.05)]"
+          className="h-12 w-auto flex gap-2 justify-start pr-7 mr-8 items-center p-1 rounded-md hover:bg-slate-50 dark:hover:bg-[rgba(225,225,225,0.05)]"
         >
           <Image
             src={MetaMafia}
@@ -38,7 +38,7 @@ const Navbar = () => {
             alt="MetaMafia Logo"
             width={500}
             height={500}
-            className="h-full w-auto rounded-md"
+            className="h-full w-full rounded-md"
           />
           <span className="md:block hidden">MetaMafia</span>
         </Link>
@@ -107,10 +107,10 @@ const Navbar = () => {
           </NavigationMenu>
         </nav>
         <div className="w-full flex justify-end items-center gap-2">
-          <Button className="w-min rounded-lg" asChild size="sm">
+          <Button className="w-min px-4 py-2" asChild size="sm">
             <Link href="/auth/sign-in">Login</Link>
           </Button>
-          <Button variant="outline" className="md:block hidden w-full rounded-lg bg-gradient-to-br from-yellow-500 via-orange-600 to-red-700 text-slate-50" size="sm">
+          <Button variant="secondary" asChild className="hidden md:flex justify-center items-center" size="sm">
           <Link href="/auth/sign-up">Sign up</Link>
           </Button>
           <DropdownMenu>

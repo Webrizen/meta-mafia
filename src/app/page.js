@@ -126,23 +126,23 @@ export default function Home() {
           <div className="mx-auto mt-10 flex w-fit flex-col items-center gap-4 sm:flex-row">
             <span className="mx-4 inline-flex items-center -space-x-4">
               <Avatar className="size-14 border">
-                <AvatarImage src="https://i.pravatar.cc/300" />
+                <AvatarImage src="https://i.pravatar.cc/300" alt="Colm Tuite" />
                 <AvatarFallback>N/A</AvatarFallback>
               </Avatar>
               <Avatar className="size-14 border">
-                <AvatarImage src="https://i.pravatar.cc/301" />
+                <AvatarImage src="https://i.pravatar.cc/301" alt="John Dow" />
                 <AvatarFallback>N/A</AvatarFallback>
               </Avatar>
               <Avatar className="size-14 border">
-                <AvatarImage src="https://i.pravatar.cc/302" />
+                <AvatarImage src="https://i.pravatar.cc/302" alt="Silam Rocky" />
                 <AvatarFallback>N/A</AvatarFallback>
               </Avatar>
               <Avatar className="size-14 border">
-                <AvatarImage src="https://i.pravatar.cc/303" />
+                <AvatarImage src="https://i.pravatar.cc/303" alt="Rajesh Khan" />
                 <AvatarFallback>N/A</AvatarFallback>
               </Avatar>
               <Avatar className="size-14 border">
-                <AvatarImage src="https://i.pravatar.cc/304" />
+                <AvatarImage src="https://i.pravatar.cc/304" alt="Desh Pandey" />
                 <AvatarFallback>N/A</AvatarFallback>
               </Avatar>
             </span>
