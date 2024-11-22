@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
+
+*{
+  scroll-behavior: smooth;
+}
+
+.cl-avatarBox {
+  width: 2.20rem;
+  height: 2.20rem;
+}
+
+.dark-bg-custom{
+  background-color: #254336;
+background-image: radial-gradient(at 70% 5%, #254336 0%, transparent 60%), radial-gradient(at 76% 74%, #6b8a7a 0%, transparent 50%), radial-gradient(at 86% 0%, #b7b597 0%, transparent 40%), radial-gradient(at 84% 1%, #dad3be 0%, transparent 30%);
+}
+
+.light-bg-custom{
+  background-color: #feffd2;
+  background-image: radial-gradient(at 36% 81%, #feffd2 0%, transparent 60%), radial-gradient(at 57% 35%, #ffeea9 0%, transparent 50%), radial-gradient(at 92% 61%, #ffbf78 0%, transparent 40%), radial-gradient(at 20% 80%, #ff7d29 0%, transparent 30%);
+}
+
+.bg-card-0{
+
+  background: radial-gradient(at 88% 49%, #35155d 0px, transparent 50%), radial-gradient(at 98% 8%, #512b81 0px, transparent 50%), radial-gradient(at 36% 29%, #4477ce 0px, transparent 50%), radial-gradient(at 95% 8%, #8cabff 0px, transparent 50%), #35155d;
+    
+}
+
+.bg-card-1{
+  background-color: #074173;
+background-image: radial-gradient(at 69% 99%, #074173 0%, transparent 60%), radial-gradient(at 42% 20%, #1679ab 0%, transparent 50%), radial-gradient(at 13% 8%, #5debd7 0%, transparent 40%), radial-gradient(at 59% 2%, #c5ff95 0%, transparent 30%);
+}
+
+.bg-card-2{
+  background-color: #430a5d;
+background-image: radial-gradient(at 98% 35%, #430a5d 0%, transparent 60%), radial-gradient(at 16% 23%, #5f374b 0%, transparent 50%), radial-gradient(at 57% 11%, #8c6a5d 0%, transparent 40%), radial-gradient(at 43% 17%, #eee4b1 0%, transparent 30%);
+}
+
+.bg-card-3{
+  background-color: #070f2b;
+  background-image: radial-gradient(at 53% 38%, #070f2b 0%, transparent 60%), radial-gradient(at 99% 52%, #1b1a55 0%, transparent 50%), radial-gradient(at 61% 27%, #535c91 0%, transparent 40%), radial-gradient(at 69% 92%, #9290c3 0%, transparent 30%);
+}
+
+.bg-card-4{
+  background-color: #1f2544;
+background-image: radial-gradient(at 98% 20%, #1f2544 0%, transparent 60%), radial-gradient(at 0% 17%, #474f7a 0%, transparent 50%), radial-gradient(at 4% 25%, #81689d 0%, transparent 40%), radial-gradient(at 73% 99%, #ffd0ec 0%, transparent 30%);
+}
+
+.bg-card-5{
+  background-color: #5356ff;
+background-image: radial-gradient(at 79% 24%, #5356ff 0%, transparent 60%), radial-gradient(at 81% 51%, #378ce7 0%, transparent 50%), radial-gradient(at 24% 85%, #67c6e3 0%, transparent 40%), radial-gradient(at 22% 9%, #dff5ff 0%, transparent 30%);
+}
+.bg-card-6{
+  background-color: #10439f;
+background-image: radial-gradient(at 64% 18%, #10439f 0%, transparent 60%), radial-gradient(at 0% 61%, #874ccc 0%, transparent 50%), radial-gradient(at 14% 87%, #c65bcf 0%, transparent 40%), radial-gradient(at 28% 46%, #f27bbd 0%, transparent 30%);
+}
