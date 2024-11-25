@@ -8,13 +8,28 @@ export default function Home() {
   return (
     <>
       <section className="py-32 dark-bg-custom relative">
+          <a
+            href="https://www.producthunt.com/posts/meta-mafia?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-meta&#0045;mafia"
+            target="_blank"
+          >
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=648920&theme=light"
+              alt="Meta&#0032;Mafia - Automated&#0032;seo&#0032;metadata&#0032;for&#0032;next&#0046;js&#0032;website | Product Hunt"
+              className="w-[250px] h-[54px] mx-auto mb-6"
+              width="250"
+              height="54"
+            />
+          </a>
         <div className="container mx-auto text-center md:px-0 px-5">
           <div className="mx-auto flex max-w-screen-lg flex-col gap-6">
             <h1 className="text-3xl font-extrabold lg:text-6xl text-slate-50">
               Let Meta Mafia handle your SEO so you can pretend you worked hard.
             </h1>
             <p className="text-balance text-muted-foreground lg:text-lg text-slate-300">
-            Boost your website's performance by generating accurate and optimized SEO metadata effortlessly. Provide your details, let Meta Mafia handle the rest, and focus on creating amazing web experiences.
+              Boost your website's performance by generating accurate and
+              optimized SEO metadata effortlessly. Provide your details, let
+              Meta Mafia handle the rest, and focus on creating amazing web
+              experiences.
             </p>
           </div>
           <div className="flex justify-center items-center md:flex-row flex-col md:max-w-2xl max-w-sm gap-3 mt-10 mx-auto">
