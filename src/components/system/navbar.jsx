@@ -59,7 +59,7 @@ const Navbar = () => {
             height={500}
             className="h-full w-auto"
           />
-          <span>Metamafia</span>
+          <span>MetaMafia</span>
         </Link>
 
         <nav className="lg:flex hidden md:border-l md:border-slate-500 md:px-3 lg:flex-row flex-col flex-grow md:relative absolute md:w-auto w-full left-0 right-0 md:top-auto top-16 z-50 text-sm items-center">

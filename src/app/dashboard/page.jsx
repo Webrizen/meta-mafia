@@ -1,114 +1,101 @@
-"use client";
-import { useState } from "react";
+import { TrendingDownIcon, TrendingUpIcon } from "lucide-react"
 
-export default function Dashboard() {
-  const [url, setUrl] = useState("");
-  const [summary, setSummary] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [metadata, setMetadata] = useState(null);
-  const [manifest, setManifest] = useState(null);
-  const [robotsTxt, setRobotsTxt] = useState("");
+import { Badge } from "@/components/ui/badge"
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
-  async function handleCrawl() {
-    if (!url) return alert("Please enter a URL.");
-    setLoading(true);
-    setSummary("");
-    setMetadata(null);
-    setManifest(null);
-    setRobotsTxt("");
-
-    try {
-      const res = await fetch("/api/crawl", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        setSummary(data.summary);
-        await handleGenerateMetadata(url, data.summary);
-      } else {
-        setSummary("Failed to crawl the website.");
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      setSummary("An error occurred.");
-      setLoading(false);
-    }
-  }
-
-  async function handleGenerateMetadata(url, content) {
-    try {
-      const res = await fetch("/api/generate-metadata", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, content }),
-      });
-
-      const data = await res.json();
-      console.log(data);
-      if (data.metadata) {
-        setMetadata(data.metadata);
-        setManifest(data.manifest);
-        setRobotsTxt(data.robotsTxt);
-      } else {
-        alert("Failed to generate metadata.");
-      }
-    } catch (error) {
-      console.error("Error generating metadata:", error);
-    }
-    setLoading(false);
-  }
-
+export default function page() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="p-6 rounded-lg shadow-lg w-96">
-        <h1 className="text-2xl font-bold mb-4">Crawl & Generate Metadata</h1>
-        <input
-          type="text"
-          className="w-full p-2 mb-4 border rounded"
-          placeholder="Enter website URL"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-        />
-        <button
-          onClick={handleCrawl}
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-          disabled={loading}
-        >
-          {loading ? "Processing..." : "Start Crawling"}
-        </button>
-
-        {summary && (
-          <div className="mt-4 p-4 border rounded">
-            <h2 className="text-lg font-bold">Summary:</h2>
-            <p className="text-sm mt-2">{summary}</p>
+    <div className="*:data-[slot=card]:shadow-xs md:grid-cols-4 grid grid-cols-1 gap-4 mt-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card">
+      <Card className="@container/card">
+        <CardHeader className="relative">
+          <CardDescription>Total Revenue</CardDescription>
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+            $1,250.00
+          </CardTitle>
+          <div className="absolute right-4 top-4">
+            <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
+              <TrendingUpIcon className="size-3" />
+              +12.5%
+            </Badge>
           </div>
-        )}
-
-        {metadata && (
-          <div className="mt-4 p-4 border rounded">
-            <h2 className="text-lg font-bold">Metadata:</h2>
-            <pre className="text-xs mt-2 overflow-auto">{JSON.stringify(metadata, null, 2)}</pre>
+        </CardHeader>
+        <CardFooter className="flex-col items-start gap-1 text-sm">
+          <div className="line-clamp-1 flex gap-2 font-medium">
+            Trending up this month <TrendingUpIcon className="size-4" />
           </div>
-        )}
-
-        {manifest && (
-          <div className="mt-4 p-4 border rounded">
-            <h2 className="text-lg font-bold">manifest.json:</h2>
-            <pre className="text-xs mt-2 overflow-auto">{JSON.stringify(manifest, null, 2)}</pre>
+          <div className="text-muted-foreground">
+            Visitors for the last 6 months
           </div>
-        )}
-
-        {robotsTxt && (
-          <div className="mt-4 p-4 border rounded">
-            <h2 className="text-lg font-bold">robots.txt:</h2>
-            <pre className="text-xs mt-2 overflow-auto">{robotsTxt}</pre>
+        </CardFooter>
+      </Card>
+      <Card className="@container/card">
+        <CardHeader className="relative">
+          <CardDescription>New Customers</CardDescription>
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+            1,234
+          </CardTitle>
+          <div className="absolute right-4 top-4">
+            <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
+              <TrendingDownIcon className="size-3" />
+              -20%
+            </Badge>
           </div>
-        )}
-      </div>
+        </CardHeader>
+        <CardFooter className="flex-col items-start gap-1 text-sm">
+          <div className="line-clamp-1 flex gap-2 font-medium">
+            Down 20% this period <TrendingDownIcon className="size-4" />
+          </div>
+          <div className="text-muted-foreground">
+            Acquisition needs attention
+          </div>
+        </CardFooter>
+      </Card>
+      <Card className="@container/card">
+        <CardHeader className="relative">
+          <CardDescription>Active Accounts</CardDescription>
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+            45,678
+          </CardTitle>
+          <div className="absolute right-4 top-4">
+            <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
+              <TrendingUpIcon className="size-3" />
+              +12.5%
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardFooter className="flex-col items-start gap-1 text-sm">
+          <div className="line-clamp-1 flex gap-2 font-medium">
+            Strong user retention <TrendingUpIcon className="size-4" />
+          </div>
+          <div className="text-muted-foreground">Engagement exceed targets</div>
+        </CardFooter>
+      </Card>
+      <Card className="@container/card">
+        <CardHeader className="relative">
+          <CardDescription>Growth Rate</CardDescription>
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+            4.5%
+          </CardTitle>
+          <div className="absolute right-4 top-4">
+            <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
+              <TrendingUpIcon className="size-3" />
+              +4.5%
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardFooter className="flex-col items-start gap-1 text-sm">
+          <div className="line-clamp-1 flex gap-2 font-medium">
+            Steady performance <TrendingUpIcon className="size-4" />
+          </div>
+          <div className="text-muted-foreground">Meets growth projections</div>
+        </CardFooter>
+      </Card>
     </div>
-  );
+  )
 }
