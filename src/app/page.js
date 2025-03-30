@@ -22,7 +22,7 @@ export default function Home() {
           </div>
           <div className="flex justify-center items-center md:flex-row flex-col md:max-w-2xl max-w-sm gap-3 mt-10 mx-auto">
             <Button size="lg" asChild>
-              <Link href="/#generate">Start Generating Now</Link>
+              <Link href="/dashbaord">Start Generating Now</Link>
             </Button>
             <Button size="lg" variant="ghost" className="text-slate-50" asChild>
               <Link href="/how-to-use">Learn More</Link>
@@ -77,7 +77,7 @@ export default function Home() {
         </div>
         <div className="absolute md:block hidden bottom-0 left-0 w-full overflow-hidden">
           <svg
-            className="relative block w-full md:h-[130px] dark:text-[#121212] text-white"
+            className="relative block w-full md:h-[130px] dark:text-slate-950 text-white"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 1440 100"
             preserveAspectRatio="none"

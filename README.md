@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+### 🎯 **Goal Recap:**  
+- Build APIs for generating metadata.
+- Add subscription/payment logic.
+- Integrate with the frontend seamlessly.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🛠️ **Backend Plan**
+
+### 1. **Core API Structure**
+- **Framework:** Next.js API Routes (Fast, No Extra Setup).
+- **Folder Structure:**
+```
+/api
+├── /auth
+│   └── login.js (NextAuth config)
+├── /metadata
+│   ├── generate.js (Form data → Basic metadata)
+│   └── ai-generate.js (AI-powered metadata generation)
+├── /user
+│   └── profile.js (Get user plan, usage)
+└── /payment
+    ├── subscribe.js (Create subscription)
+    └── webhook.js (Stripe webhook for payment status)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 2. **Authentication & User Management**
+- **NextAuth.js:** Google/GitHub OAuth.
+- **User Schema:**
+```js
+{
+  _id: ObjectId,
+  email: String,
+  plan: "free" | "pro",
+  apiUsage: Number,
+  createdAt: Date,
+}
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+### 3. **Metadata Generation APIs**
+✅ **/api/metadata/generate.js**  
+- Input: Site URL + Manual Data.  
+- Output: robots.txt, sitemap.xml, manifest.json.  
 
-To learn more about Next.js, take a look at the following resources:
+✅ **/api/metadata/ai-generate.js** (Pro Plan)  
+- Input: Site URL.  
+- Process: Crawl site → Analyze content → Generate AI-enriched metadata.  
+- Output: AI-enhanced metadata JSON.  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. **Payment & Subscription Logic**
+✅ **Stripe Integration**
+- One-time Payment (Launch Plan)
+- Subscription Later (Scale Plan)
+- **Webhooks:** To auto-update user plans after payment.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 5. **Admin & Dashboard APIs**
+- **/api/user/profile.js:** Get user profile + plan.
+- **/api/payment/subscribe.js:** Create payment session.
+- **/api/payment/webhook.js:** Handle payment confirmations.
