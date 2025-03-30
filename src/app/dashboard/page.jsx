@@ -27,7 +27,7 @@ export default function Dashboard() {
       const data = await res.json();
       if (data.success) {
         setSummary(data.summary);
-        await handleGenerateMetadata(data.summary);
+        await handleGenerateMetadata(url, data.summary);
       } else {
         setSummary("Failed to crawl the website.");
         setLoading(false);
@@ -39,12 +39,12 @@ export default function Dashboard() {
     }
   }
 
-  async function handleGenerateMetadata(content) {
+  async function handleGenerateMetadata(url, content) {
     try {
       const res = await fetch("/api/generate-metadata", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ url, content }),
       });
 
       const data = await res.json();

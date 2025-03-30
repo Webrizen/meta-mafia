@@ -21,7 +21,14 @@ export async function POST(req) {
   }
 
   try {
-    const { content } = await req.json();
+    const { content, url } = await req.json();
+
+    if (!content || !url) {
+      return new Response(
+        JSON.stringify({ error: "Missing required fields: content and url" }),
+        { status: 400 }
+      );
+    }
 
     // AI Prompt to generate metadata, manifest.json, and robots.txt
     const prompt = `
@@ -36,15 +43,14 @@ export async function POST(req) {
         Return the result as a JSON object in the format:
         {
           "metadata": {
-             title: {
-    default: "...",
-    template: "%s | ...",
-  },
-  description: {
-    default:
-      "...",
-    template: "%s | ...",
-  },
+            "title": {
+              "default": "...",
+              "template": "%s | ..."
+            },
+            "description": {
+              "default": "...",
+              "template": "%s | ..."
+            },
             "keywords": ["...", "..."],
             "openGraph": {
               "type": "website",
@@ -98,20 +104,25 @@ export async function POST(req) {
         }
       `;
 
-    const result = await ai.models.generateContentStream({
+    // Use generateContent (non-streaming) as per official docs.
+    const result = await ai.models.generateContent({
       model: "gemini-1.5-flash",
       contents: prompt,
     });
 
-    let aiResponse = "";
-    for await (const chunk of result) {
-      aiResponse += chunk.text;
+    // According to docs, result.text is the response text.
+    const aiResponse = result.text;
+    if (!aiResponse) {
+      throw new Error("Empty AI response");
     }
 
     const cleanResponse = aiResponse.replace(/```json|```/g, "").trim();
-    const generatedData = JSON.parse(cleanResponse);
+const generatedData = JSON.parse(cleanResponse);
 
     // Save metadata to DB
+    await dbConnect();
+
+    
     const metadata = await Metadata.create({
       userId: userId,
       metadata: generatedData,
@@ -119,9 +130,10 @@ export async function POST(req) {
     });
 
     // Associate metadata with user
-    await User.findByIdAndUpdate(userId, {
-      $push: { metadata: metadata._id },
-    });
+    await User.findOneAndUpdate(
+      { clerkId: userId }, // Use clerkId to find the user
+      { $push: { metadata: metadata._id } }
+    );    
 
     return new Response(
       JSON.stringify({
@@ -147,22 +159,34 @@ export async function GET(req) {
     const documentId = url.searchParams.get("id");
 
     if (!documentId) {
-      return NextResponse.json({ success: false, error: "Missing documentId" }, { status: 400 });
+      return new Response(
+        JSON.stringify({ success: false, error: "Missing documentId" }),
+        { status: 400 }
+      );
     }
 
     // Fetch metadata by documentId
     const metadata = await Metadata.findById(documentId);
 
     if (!metadata) {
-      return NextResponse.json({ success: false, error: "Metadata not found" }, { status: 404 });
+      return new Response(
+        JSON.stringify({ success: false, error: "Metadata not found" }),
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: metadata,
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: metadata,
+      }),
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error fetching metadata:", error.message);
-    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
+    return new Response(
+      JSON.stringify({ success: false, error: "Internal server error" }),
+      { status: 500 }
+    );
   }
 }
