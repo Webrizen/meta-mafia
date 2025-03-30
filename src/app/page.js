@@ -13,7 +13,7 @@ export default function Home() {
             <h1 className="text-3xl font-extrabold lg:text-6xl text-slate-50">
               Let Meta Mafia handle your SEO so you can pretend you worked hard.
             </h1>
-            <p className="text-balance text-muted-foreground lg:text-lg text-slate-300">
+            <p className="text-balance lg:text-lg text-slate-300">
               Boost your website's performance by generating accurate and
               optimized SEO metadata effortlessly. Provide your details, let
               Meta Mafia handle the rest, and focus on creating amazing web
@@ -22,7 +22,7 @@ export default function Home() {
           </div>
           <div className="flex justify-center items-center md:flex-row flex-col md:max-w-2xl max-w-sm gap-3 mt-10 mx-auto">
             <Button size="lg" asChild>
-              <Link href="/dashbaord">Start Generating Now</Link>
+              <Link href="/dashboard">Start Generating Now</Link>
             </Button>
             <Button size="lg" variant="ghost" className="text-slate-50" asChild>
               <Link href="/how-to-use">Learn More</Link>
