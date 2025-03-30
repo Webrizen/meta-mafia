@@ -1,24 +1,30 @@
-import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
 
 const uri = process.env.MONGODB_URI;
-const options = {};
 
-let client;
-let clientPromise;
-
-if (!process.env.MONGODB_URI) {
+if (!uri) {
   throw new Error("Add MongoDB URI to .env.local");
 }
 
-if (process.env.NODE_ENV === "development") {
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    global._mongoClientPromise = client.connect();
+let isConnected = false; // Track connection status
+
+async function dbConnect() {
+  if (isConnected) {
+    console.log("=> Using existing database connection");
+    return;
   }
-  clientPromise = global._mongoClientPromise;
-} else {
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
+
+  try {
+    const db = await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    isConnected = db.connections[0].readyState === 1;
+    console.log("✅ Database connected successfully");
+  } catch (error) {
+    console.error("❌ Error connecting to database:", error);
+    throw new Error("Database connection failed");
+  }
 }
 
-export default clientPromise;
+export default dbConnect;

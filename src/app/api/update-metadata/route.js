@@ -1,10 +1,10 @@
-import clientPromise from "@/utils/db";
+import dbConnect from "@/utils/db";
 import Metadata from "@/models/metadataModel";
 import { NextResponse } from "next/server";
 
 export async function PUT(req) {
   try {
-    await clientPromise();
+    await dbConnect();
     const { id, metadata } = await req.json();
 
     if (!id || !metadata) {

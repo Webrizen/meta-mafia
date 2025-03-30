@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { GoogleGenAI } from "@google/genai";
 import Metadata from "@/models/metadataModel";
 import User from "@/models/userModel";
-import clientPromise from "@/utils/db";
+import dbConnect from "@/utils/db";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
@@ -142,7 +142,7 @@ export async function POST(req) {
 
 export async function GET(req) {
   try {
-    await clientPromise();
+    await dbConnect();
     const url = new URL(req.url);
     const documentId = url.searchParams.get("id");
 

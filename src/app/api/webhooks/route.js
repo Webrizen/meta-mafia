@@ -2,7 +2,7 @@ import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import User from "@/models/userModel";
-import clientPromise from "@/utils/db";
+import dbConnect from "@/utils/db";
 
 const SIGNING_SECRET = process.env.SIGNING_SECRET;
 
@@ -43,17 +43,20 @@ export async function POST(req) {
   const eventType = evt.type;
   const userInfo = evt.data;
 
-  await clientPromise();
+  await dbConnect(); // ✅ Correct DB connection
 
   // Handle event types
   if (eventType === "user.created") {
-    const newUser = {
-      clerkId: userInfo.id,
-      name: `${userInfo.first_name || ""} ${userInfo.last_name || ""}`.trim(),
-      email: userInfo.email_addresses[0]?.email_address || "",
-    };
+    const { id, first_name, last_name, email_addresses, image_url } = userInfo;
 
-    const createdUser = await User.create(newUser);
+    const createdUser = await User.create({
+      clerkId: id,
+      firstName: first_name,
+      lastName: last_name,
+      email: email_addresses[0].email_address,
+      imageUrl: image_url,
+    });
+
     return NextResponse.json({ success: true, user: createdUser });
   }
 

@@ -1,10 +1,10 @@
-import clientPromise from "@/utils/db";
+import dbConnect from "@/utils/db";
 import Metadata from "@/models/metadataModel";
 import { NextResponse } from "next/server";
 
 export async function DELETE(req) {
   try {
-    await clientPromise();
+    await dbConnect();
     const url = new URL(req.url);
     const documentId = url.searchParams.get("id");
 
