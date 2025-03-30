@@ -24,9 +24,9 @@ export async function POST(req) {
     return NextResponse.json({ success: false, error: "Missing Svix headers" });
   }
 
-  // Get request body
-  const payload = await req.text();
-
+  const rawBody = await req.text();
+  const payload = rawBody.trim();
+  
   let evt;
   try {
     evt = wh.verify(payload, {
@@ -37,7 +37,8 @@ export async function POST(req) {
   } catch (err) {
     console.error("Error verifying webhook:", err.message);
     return NextResponse.json({ success: false, error: "Verification failed" });
-  }  
+  }
+  
 
   const eventType = evt.type;
   const userInfo = evt.data;
