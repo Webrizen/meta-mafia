@@ -2,7 +2,7 @@ import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import User from "@/models/userModel";
-import { connectDB } from "@/utils/db";
+import clientPromise from "@/utils/db";
 
 const SIGNING_SECRET = process.env.SIGNING_SECRET;
 
@@ -43,7 +43,7 @@ export async function POST(req) {
   const eventType = evt.type;
   const userInfo = evt.data;
 
-  await connectDB();
+  await clientPromise();
 
   // Handle event types
   if (eventType === "user.created") {
