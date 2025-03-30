@@ -57,7 +57,10 @@ export async function POST(req) {
       imageUrl: image_url,
     });
 
-    return NextResponse.json({ success: true, user: createdUser });
+    return new Response(JSON.stringify({ success: true, user: createdUser }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });    
   }
 
   if (eventType === "user.updated") {
