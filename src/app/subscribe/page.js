@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function Subscribe() {
@@ -36,6 +36,7 @@ export default function Subscribe() {
   };
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="bg-white p-6 rounded-2xl shadow-lg text-center">
         <h2 className="text-2xl font-bold mb-4">Confirm Your Subscription</h2>
@@ -51,5 +52,6 @@ export default function Subscribe() {
         </button>
       </div>
     </div>
+    </Suspense>
   );
 }
