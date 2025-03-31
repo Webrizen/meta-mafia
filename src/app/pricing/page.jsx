@@ -5,7 +5,7 @@ const pricingPlans = [
     name: "Basic",
     price: "₹499/month",
     features: ["Basic metadata generation", "Manual updates"],
-    stripePriceId: "price_basic_001",
+    stripePriceId: "price_1PjaWNSBcUwzODpLNpIBeddZ",
   },
   {
     name: "Pro",
@@ -15,7 +15,7 @@ const pricingPlans = [
       "Auto-updates",
       "Unlimited requests",
     ],
-    stripePriceId: "price_pro_001",
+    stripePriceId: "price_1PjaYrSBcUwzODpLtlwEHplj",
   },
 ];
 
