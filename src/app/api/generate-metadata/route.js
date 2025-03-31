@@ -20,6 +20,16 @@ export async function POST(req) {
     );
   }
 
+   // Check if the user has an active subscription
+   const isSubscribed = await getUserSubscription(userId);
+
+   if (!isSubscribed) {
+     return NextResponse.json(
+       { error: "Subscription required for AI metadata." },
+       { status: 403 }
+     );
+   }
+
   try {
     const { content, url } = await req.json();
 
