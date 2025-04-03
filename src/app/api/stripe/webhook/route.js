@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/utils/db";
 import Subscription from "@/models/Subscription";
+import userModel from "@/models/userModel";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+async function resetRequestCount(userId) {
+  await dbConnect();
+  await userModel.findOneAndUpdate({ clerkId: userId }, { requestCount: 0 });
+}
 
 export async function POST(req) {
   const rawBody = await req.text();
@@ -16,7 +22,10 @@ export async function POST(req) {
     event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
   } catch (err) {
     console.error("⚠️ Webhook Error:", err.message);
-    return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid webhook signature" },
+      { status: 400 }
+    );
   }
 
   await dbConnect();
@@ -43,6 +52,21 @@ export async function POST(req) {
         { upsert: true }
       );
       console.log(`✅ Subscription for user ${userId} activated!`);
+      break;
+
+    case "invoice.payment_succeeded":
+      const invoice = event.data.object;
+      const subscriptionId = invoice.subscription;
+
+      // Get subscription to identify userId
+      const subscriptionRecord = await Subscription.findOne({
+        stripeSubscriptionId: subscriptionId,
+      });
+
+      if (subscriptionRecord) {
+        await resetRequestCount(subscriptionRecord.userId);
+        console.log(`🔄 Request count reset for user: ${subscriptionRecord.userId}`);
+      }
       break;
 
     case "customer.subscription.deleted":

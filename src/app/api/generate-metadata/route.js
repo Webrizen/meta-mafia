@@ -3,6 +3,7 @@ import { GoogleGenAI } from "@google/genai";
 import Metadata from "@/models/metadataModel";
 import User from "@/models/userModel";
 import dbConnect from "@/utils/db";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
@@ -13,6 +14,7 @@ const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 export async function POST(req) {
   // Check if the user is authenticated
   const { userId } = await auth();
+
   if (!userId) {
     return new Response(
       JSON.stringify({ error: "Unauthorized access. Please log in." }),
@@ -20,15 +22,18 @@ export async function POST(req) {
     );
   }
 
-   // Check if the user has an active subscription
-   const isSubscribed = await getUserSubscription(userId);
+  // Check if the user has an active subscription
+  const isSubscribed = await getUserSubscription(userId);
 
-   if (!isSubscribed) {
-     return NextResponse.json(
-       { error: "Subscription required for AI metadata." },
-       { status: 403 }
-     );
-   }
+  if (!isSubscribed) {
+    return NextResponse.json(
+      { error: "Subscription required for AI metadata." },
+      { status: 403 }
+    );
+  }
+
+  // Check rate limit before proceeding
+  await checkRateLimit(userId);
 
   try {
     const { content, url } = await req.json();
@@ -127,12 +132,11 @@ export async function POST(req) {
     }
 
     const cleanResponse = aiResponse.replace(/```json|```/g, "").trim();
-const generatedData = JSON.parse(cleanResponse);
+    const generatedData = JSON.parse(cleanResponse);
 
     // Save metadata to DB
     await dbConnect();
 
-    
     const metadata = await Metadata.create({
       userId: userId,
       metadata: generatedData,
@@ -143,7 +147,7 @@ const generatedData = JSON.parse(cleanResponse);
     await User.findOneAndUpdate(
       { clerkId: userId }, // Use clerkId to find the user
       { $push: { metadata: metadata._id } }
-    );    
+    );
 
     return new Response(
       JSON.stringify({
