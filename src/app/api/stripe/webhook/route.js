@@ -1,4 +1,3 @@
-import { Readable } from "stream";
 import { buffer } from "micro";
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
@@ -15,12 +14,6 @@ export const config = {
   },
 };
 
-// Helper to convert Next.js Request to a readable stream
-async function getRawBody(req) {
-  const readable = Readable.from(req.body);
-  return await buffer(readable);
-}
-
 async function resetRequestCount(userId) {
   await dbConnect();
   await userModel.findOneAndUpdate({ clerkId: userId }, { requestCount: 0 });
@@ -30,7 +23,7 @@ export async function POST(req) {
   let event;
 
   try {
-    const rawBody = await getRawBody(req); // Get raw body
+    const rawBody = await buffer(req); // Get raw body directly from the request
     const sig = req.headers.get("stripe-signature"); // Use .get() to access headers
 
     if (!sig) {
