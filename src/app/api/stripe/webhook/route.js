@@ -11,9 +11,7 @@ export const config = {
   },
 };
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(req) {
@@ -23,16 +21,28 @@ export async function POST(req) {
 
   let event;
   try {
-    // Read raw body as buffer, then convert to string and trim whitespace
+    // Read raw body from request as a buffer
     const rawBodyBuffer = await buffer(req);
-    const rawBody = rawBodyBuffer.toString("utf8").trim();
-
+    // Convert to a UTF-8 string without trimming
+    const rawBody = rawBodyBuffer.toString("utf8");
+    console.log("Raw body length:", rawBody.length);
+    
     const sig = req.headers.get("stripe-signature");
     if (!sig) {
       throw new Error("Missing Stripe signature header");
     }
 
-    event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
+     // Read raw body from request as a buffer
+     const rawBodyBuffer = await buffer(req);
+     // Convert to a UTF-8 string without trimming
+     const rawBody = rawBodyBuffer.toString("utf8");
+     console.log("Raw body length:", rawBody.length);
+     
+     const sig = req.headers.get("stripe-signature");
+     if (!sig) {
+       throw new Error("Missing Stripe signature header");
+     }
+ 
   } catch (err) {
     console.error("⚠️ Webhook Error:", err.message);
     return NextResponse.json(
