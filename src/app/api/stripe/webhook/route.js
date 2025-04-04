@@ -23,8 +23,9 @@ export async function POST(req) {
   let event;
 
   try {
-    const rawBody = await buffer(req); // Get raw body directly from the request
-    const sig = req.headers.get("stripe-signature"); // Use .get() to access headers
+    // Read the raw body from the request
+    const rawBody = await buffer(req);
+    const sig = req.headers.get("stripe-signature");
 
     if (!sig) {
       throw new Error("Missing Stripe signature header");
@@ -40,79 +41,92 @@ export async function POST(req) {
     );
   }
 
-  await dbConnect();
+  // Handle the event
+  try {
+    await dbConnect();
 
-  switch (event.type) {
-    case "checkout.session.completed":
-      const session = event.data.object;
+    switch (event.type) {
+      case "checkout.session.completed": {
+        const session = event.data.object;
 
-      const userId = session.metadata.userId;
-      const stripeCustomerId = session.customer;
-      const stripeSubscriptionId = session.subscription;
-      const subscriptionx = await stripe.subscriptions.retrieve(
-        stripeSubscriptionId
-      );
-      const plan = subscriptionx.items.data[0].plan.nickname || "Unknown";
+        const userId = session.metadata.userId;
+        const stripeCustomerId = session.customer;
+        const stripeSubscriptionId = session.subscription;
 
-      // Save subscription info
-      await Subscription.findOneAndUpdate(
-        { userId },
-        {
-          userId,
-          stripeCustomerId,
-          stripeSubscriptionId,
-          plan,
-          status: "active",
-        },
-        { upsert: true }
-      );
+        const subscription = await stripe.subscriptions.retrieve(
+          stripeSubscriptionId
+        );
+        const plan = subscription.items.data[0].plan.nickname || "Unknown";
 
-      // Update user's plan in the database
-      await userModel.findOneAndUpdate(
-        { clerkId: userId },
-        { plan: plan.toLowerCase() }
-      );
+        // Save subscription info
+        await Subscription.findOneAndUpdate(
+          { userId },
+          {
+            userId,
+            stripeCustomerId,
+            stripeSubscriptionId,
+            plan,
+            status: "active",
+          },
+          { upsert: true }
+        );
 
-      console.log(`✅ Subscription for user ${userId} activated!`);
-      break;
+        // Update user's plan in the database
+        await userModel.findOneAndUpdate(
+          { clerkId: userId },
+          { plan: plan.toLowerCase() }
+        );
 
-    case "invoice.payment_succeeded":
-      const invoice = event.data.object;
-      const subscriptionId = invoice.subscription;
-
-      // Get subscription to identify userId
-      const subscriptionRecord = await Subscription.findOne({
-        stripeSubscriptionId: subscriptionId,
-      });
-
-      if (!subscriptionRecord) {
-        console.error(`❌ Subscription not found for ID: ${subscriptionId}`);
+        console.log(`✅ Subscription for user ${userId} activated!`);
         break;
       }
 
-      await resetRequestCount(subscriptionRecord.userId);
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object;
+        const subscriptionId = invoice.subscription;
 
-      // Update user's plan in the database
-      await userModel.findOneAndUpdate(
-        { clerkId: subscriptionRecord.userId },
-        { plan: subscriptionRecord.plan.toLowerCase() }
-      );
+        // Get subscription to identify userId
+        const subscriptionRecord = await Subscription.findOne({
+          stripeSubscriptionId: subscriptionId,
+        });
 
-      console.log(`🔄 Request count reset for user: ${subscriptionRecord.userId}`);
-      break;
+        if (!subscriptionRecord) {
+          console.error(`❌ Subscription not found for ID: ${subscriptionId}`);
+          break;
+        }
 
-    case "customer.subscription.deleted":
-      const subscriptionDeleted = event.data.object;
-      await Subscription.findOneAndUpdate(
-        { stripeSubscriptionId: subscriptionDeleted.id },
-        { status: "canceled" }
-      );
-      console.log("❌ Subscription canceled.");
-      break;
+        await resetRequestCount(subscriptionRecord.userId);
 
-    default:
-      console.log(`Unhandled event type: ${event.type}`);
+        // Update user's plan in the database
+        await userModel.findOneAndUpdate(
+          { clerkId: subscriptionRecord.userId },
+          { plan: subscriptionRecord.plan.toLowerCase() }
+        );
+
+        console.log(`🔄 Request count reset for user: ${subscriptionRecord.userId}`);
+        break;
+      }
+
+      case "customer.subscription.deleted": {
+        const subscriptionDeleted = event.data.object;
+        await Subscription.findOneAndUpdate(
+          { stripeSubscriptionId: subscriptionDeleted.id },
+          { status: "canceled" }
+        );
+        console.log("❌ Subscription canceled.");
+        break;
+      }
+
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+    }
+
+    return NextResponse.json({ received: true });
+  } catch (err) {
+    console.error("⚠️ Error handling webhook event:", err.message);
+    return NextResponse.json(
+      { error: "Webhook handler error" },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json({ received: true });
 }
