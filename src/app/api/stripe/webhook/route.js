@@ -7,7 +7,7 @@ import userModel from "@/models/userModel";
 
 export const config = {
   api: {
-    bodyParser: false, // Disable body parsing for this route
+    bodyParser: false,
   },
 };
 
@@ -23,37 +23,42 @@ export async function POST(req) {
 
   let event;
   try {
-    // Read the raw body from the request
-    const rawBody = await buffer(req);
-    const sig = req.headers.get("stripe-signature");
+    // Read raw body as buffer, then convert to string and trim whitespace
+    const rawBodyBuffer = await buffer(req);
+    const rawBody = rawBodyBuffer.toString("utf8").trim();
 
+    const sig = req.headers.get("stripe-signature");
     if (!sig) {
       throw new Error("Missing Stripe signature header");
     }
 
-    // Verify the webhook signature
-    event = stripe.webhooks.constructEvent(rawBody.toString(), sig, webhookSecret);
+    event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
   } catch (err) {
     console.error("⚠️ Webhook Error:", err.message);
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+    return NextResponse.json(
+      { error: `Webhook Error: ${err.message}` },
+      { status: 400 }
+    );
   }
 
-  // Handle the event
+  // Process the event
   try {
     await dbConnect();
 
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object;
-
         const userId = session.metadata.userId;
         const stripeCustomerId = session.customer;
         const stripeSubscriptionId = session.subscription;
 
-        const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+        // Retrieve the subscription to extract plan info
+        const subscription = await stripe.subscriptions.retrieve(
+          stripeSubscriptionId
+        );
         const plan = subscription.items.data[0].plan.nickname || "Unknown";
 
-        // Save subscription info
+        // Save/update subscription info in our database
         await Subscription.findOneAndUpdate(
           { userId },
           {
@@ -66,7 +71,7 @@ export async function POST(req) {
           { upsert: true }
         );
 
-        // Update user's plan in the database
+        // Update user's plan in our user model
         await userModel.findOneAndUpdate(
           { clerkId: userId },
           { plan: plan.toLowerCase() }
@@ -80,23 +85,22 @@ export async function POST(req) {
         const invoice = event.data.object;
         const subscriptionId = invoice.subscription;
 
-        // Get subscription to identify userId
-        const subscriptionRecord = await Subscription.findOne({
-          stripeSubscriptionId: subscriptionId,
-        });
-
+        // Find our subscription record     
+        const subscriptionRecord = await Subscription.findOne({ stripeSubscriptionId: subscriptionId });
         if (!subscriptionRecord) {
           console.error(`❌ Subscription not found for ID: ${subscriptionId}`);
           break;
         }
-
-        // Reset request count
+        // Reset the user's request count on successful invoice payment\n
         await userModel.findOneAndUpdate(
           { clerkId: subscriptionRecord.userId },
-          { requestCount: 0 }
+          {
+            requestCount: 0,
+          }
         );
-
-        console.log(`🔄 Request count reset for user: ${subscriptionRecord.userId}`);
+        console.log(
+          `🔄 Request count reset for user: ${subscriptionRecord.userId}`
+        );
         break;
       }
 
@@ -117,6 +121,9 @@ export async function POST(req) {
     return NextResponse.json({ received: true });
   } catch (err) {
     console.error("⚠️ Error handling webhook event:", err.message);
-    return NextResponse.json({ error: "Webhook handler error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Webhook handler error" },
+      { status: 500 }
+    );
   }
 }
