@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import { Moon, Sun } from "lucide-react";
+import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -154,7 +154,7 @@ const Navbar = () => {
             className="!min-h-[35px] !min-w-[35px] cursor-pointer"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           >
-            {theme === "light" ? <Moon /> : <Sun />}
+            {theme === "light" ? <MoonIcon /> : <SunIcon />}
           </Button>
           <Sheet>
             <SheetTrigger className="w-10 h-10 flex md:hidden justify-center items-center hover:bg-slate-100 dark:hover:bg-[rgba(225,225,225,0.1)] rounded">

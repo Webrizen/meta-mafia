@@ -8,17 +8,20 @@ const subscriptionSchema = new mongoose.Schema({
   },
   stripeCustomerId: String,
   stripeSubscriptionId: String,
-  plan: String,
+  plan: {
+    type: String,
+    default: "basic", // Default plan
+  },
   status: {
     type: String,
     enum: ["active", "canceled", "past_due"],
-    default: "canceled",
+    default: "canceled", // Default status
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
-});
+}, { timestamps: true });
 
 export default mongoose.models.Subscription ||
   mongoose.model("Subscription", subscriptionSchema);

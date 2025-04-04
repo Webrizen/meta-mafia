@@ -3,6 +3,7 @@ import dbConnect from "@/utils/db";
 import Subscription from "@/models/Subscription";
 import userModel from "@/models/userModel";
 import Stripe from "stripe";
+import { buffer } from "micro";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -13,7 +14,7 @@ async function resetRequestCount(userId) {
 }
 
 export async function POST(req) {
-  const rawBody = await req.text();
+  const rawBody = await buffer(req);
   const sig = req.headers.get("stripe-signature");
 
   let event;
@@ -37,7 +38,10 @@ export async function POST(req) {
       const userId = session.metadata.userId;
       const stripeCustomerId = session.customer;
       const stripeSubscriptionId = session.subscription;
-      const plan = session.display_items?.[0]?.plan?.nickname || "Unknown";
+      const subscriptionx = await stripe.subscriptions.retrieve(
+        stripeSubscriptionId
+      );
+      const plan = subscriptionx.items.data[0].plan.nickname || "Unknown";
 
       // Save subscription info
       await Subscription.findOneAndUpdate(
@@ -51,6 +55,13 @@ export async function POST(req) {
         },
         { upsert: true }
       );
+
+      // Update user's plan in the database
+      await userModel.findOneAndUpdate(
+        { clerkId: userId },
+        { plan: plan.toLowerCase() }
+      );
+
       console.log(`✅ Subscription for user ${userId} activated!`);
       break;
 
@@ -65,7 +76,16 @@ export async function POST(req) {
 
       if (subscriptionRecord) {
         await resetRequestCount(subscriptionRecord.userId);
-        console.log(`🔄 Request count reset for user: ${subscriptionRecord.userId}`);
+
+        // Update user's plan in the database
+        await userModel.findOneAndUpdate(
+          { clerkId: subscriptionRecord.userId },
+          { plan: subscriptionRecord.plan.toLowerCase() }
+        );
+
+        console.log(
+          `🔄 Request count reset for user: ${subscriptionRecord.userId}`
+        );
       }
       break;
 

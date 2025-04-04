@@ -17,10 +17,10 @@ export default function AuthLayout({ children }) {
               </p>
               <div className="mt-4 md:mb-12 max-w-2xl">
                 <h1 className="mb-4 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-                 ...
+                Power Your Web Presence with Smarter Metadata
                 </h1>
                 <p className="text-xl dark:text-slate-100/70 text-slate-950/70">
-                 ...
+                Every website tells a story, but not all stories are found. MetaMafia ensures your site stands out, ranks better, and speaks the right language to search engines. Whether you're signing in or signing up, you're taking the first step toward effortless metadata automation.
                 </p>
               </div>
               <blockquote className="hidden md:block relative max-w-sm">

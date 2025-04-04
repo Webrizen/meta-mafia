@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, unique: true },
     imageUrl: { type: String },
     requestCount: { type: Number, default: 0 }, // Track API requests
-    plan: { type: String, enum: ["basic", "pro"], default: "basic" }, // Plan info
+    plan: { type: String, default: "basic" }, // Remove enum restriction
   },
   { timestamps: true }
 );

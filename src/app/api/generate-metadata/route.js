@@ -4,6 +4,7 @@ import Metadata from "@/models/metadataModel";
 import User from "@/models/userModel";
 import dbConnect from "@/utils/db";
 import { checkRateLimit } from "@/lib/rateLimit";
+import { getUserSubscription } from "@/lib/stripe";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
