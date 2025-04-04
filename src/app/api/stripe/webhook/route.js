@@ -30,9 +30,12 @@ export async function POST(req) {
   let event;
 
   try {
-    const rawBody = await getRawBody(req);
-    console.log("Raw Body:", rawBody.toString());
-    const sig = req.headers.get("stripe-signature");
+    const rawBody = await getRawBody(req); // Get raw body
+    const sig = req.headers.get("stripe-signature"); // Use .get() to access headers
+
+    if (!sig) {
+      throw new Error("Missing Stripe signature header");
+    }
 
     // Verify the webhook signature
     event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
