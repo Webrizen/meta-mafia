@@ -5,23 +5,23 @@ import dbConnect from "@/utils/db";
 import Subscription from "@/models/Subscription";
 import userModel from "@/models/userModel";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
 export const config = {
   api: {
     bodyParser: false, // Disable body parsing for this route
   },
 };
 
-async function resetRequestCount(userId) {
-  await dbConnect();
-  await userModel.findOneAndUpdate({ clerkId: userId }, { requestCount: 0 });
-}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16",
+});
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(req) {
-  let event;
+  if (req.method !== "POST") {
+    return NextResponse.json({ error: "Method Not Allowed" }, { status: 405 });
+  }
 
+  let event;
   try {
     // Read the raw body from the request
     const rawBody = await buffer(req);
@@ -32,13 +32,10 @@ export async function POST(req) {
     }
 
     // Verify the webhook signature
-    event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
+    event = stripe.webhooks.constructEvent(rawBody.toString(), sig, webhookSecret);
   } catch (err) {
     console.error("⚠️ Webhook Error:", err.message);
-    return NextResponse.json(
-      { error: "Invalid webhook signature" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
   }
 
   // Handle the event
@@ -53,9 +50,7 @@ export async function POST(req) {
         const stripeCustomerId = session.customer;
         const stripeSubscriptionId = session.subscription;
 
-        const subscription = await stripe.subscriptions.retrieve(
-          stripeSubscriptionId
-        );
+        const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
         const plan = subscription.items.data[0].plan.nickname || "Unknown";
 
         // Save subscription info
@@ -95,12 +90,10 @@ export async function POST(req) {
           break;
         }
 
-        await resetRequestCount(subscriptionRecord.userId);
-
-        // Update user's plan in the database
+        // Reset request count
         await userModel.findOneAndUpdate(
           { clerkId: subscriptionRecord.userId },
-          { plan: subscriptionRecord.plan.toLowerCase() }
+          { requestCount: 0 }
         );
 
         console.log(`🔄 Request count reset for user: ${subscriptionRecord.userId}`);
@@ -124,9 +117,6 @@ export async function POST(req) {
     return NextResponse.json({ received: true });
   } catch (err) {
     console.error("⚠️ Error handling webhook event:", err.message);
-    return NextResponse.json(
-      { error: "Webhook handler error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Webhook handler error" }, { status: 500 });
   }
 }
