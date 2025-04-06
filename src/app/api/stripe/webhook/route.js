@@ -1,130 +1,96 @@
-import { buffer } from "micro";
-import Stripe from "stripe";
-import { NextResponse } from "next/server";
-import dbConnect from "@/utils/db";
-import Subscription from "@/models/Subscription";
-import userModel from "@/models/userModel";
+import { NextResponse } from 'next/server';
+import Stripe from 'stripe';
+import { clerkClient } from "@clerk/nextjs/server";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+export async function POST(request) {
+  const body = await request.text();
+  const sig = request.headers.get('stripe-signature');
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
+  } catch (err) {
+    console.error('Error verifying webhook signature:', err);
+    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+  }
+
+  // Handle the event
+  switch (event.type) {
+    case 'customer.subscription.updated':
+      await handleSubscriptionUpdated(event.data.object);
+      break;
+    case 'customer.subscription.deleted':
+      await handleSubscriptionDeleted(event.data.object);
+      break;
+    case 'invoice.payment_succeeded':
+      await handleInvoicePaid(event.data.object);
+      break;
+    // ... handle other events
+    default:
+      console.log(`Unhandled event type: ${event.type}`);
+  }
+
+  return NextResponse.json({ received: true });
+}
+
+async function handleSubscriptionUpdated(subscription) {
+  const customerId = subscription.customer;
+  const subscriptionStatus = subscription.status;
+
+  // 1. Fetch Stripe customer to get Clerk userId from metadata
+  const customer = await stripe.customers.retrieve(customerId);
+  const clerkUserId = customer.metadata?.clerkUserId;
+
+  if (!clerkUserId) {
+    console.warn("Missing clerkUserId in Stripe metadata");
+    return;
+  }
+
+  // 2. Update Clerk user metadata
+  await clerkClient.users.updateUserMetadata(clerkUserId, {
+    publicMetadata: {
+      subscriptionStatus: subscriptionStatus,
+      subscriptionId: subscription.id,
+      currentPeriodEnd: subscription.current_period_end,
+      plan: subscription.items.data[0]?.price?.id,
+    },
+  });
+
+  console.log(`[Stripe] Updated Clerk user ${clerkUserId} with subscription ${subscription.id}`);
+}
+
+async function handleSubscriptionDeleted(subscription) {
+  const customer = await stripe.customers.retrieve(subscription.customer);
+  const clerkUserId = customer.metadata?.clerkUserId;
+
+  if (!clerkUserId) return;
+
+  await clerkClient.users.updateUserMetadata(clerkUserId, {
+    publicMetadata: {
+      subscriptionStatus: "canceled",
+    },
+  });
+
+  console.log(`[Stripe] Canceled subscription for user ${clerkUserId}`);
+}
+
+async function handleInvoicePaid(invoice) {
+  const customerId = invoice.customer;
+  const customer = await stripe.customers.retrieve(customerId);
+  const clerkUserId = customer.metadata?.clerkUserId;
+
+  if (!clerkUserId) return;
+
+  // Optional: add payment history or flags in metadata
+  console.log(`[Stripe] Payment succeeded for user ${clerkUserId}`);
+}
+
 
 export const config = {
   api: {
     bodyParser: false,
   },
 };
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-export async function POST(req) {
-  if (req.method !== "POST") {
-    return NextResponse.json({ error: "Method Not Allowed" }, { status: 405 });
-  }
-
-  let event;
-  try {
-     // Read raw body from the request as a buffer
-     const bufData = await buffer(req);
-     // Convert buffer to a UTF-8 string without trimming
-     const rawBody = bufData.toString("utf8");
-     console.log("Raw body length:", rawBody.length);
-     
-     const sig = req.headers.get("stripe-signature");
-     if (!sig) {
-       throw new Error("Missing Stripe signature header");
-     }
- 
-     // Verify the webhook signature with the exact raw body
-     event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
-  } catch (err) {
-    console.error("⚠️ Webhook Error:", err.message);
-    return NextResponse.json(
-      { error: `Webhook Error: ${err.message}` },
-      { status: 400 }
-    );
-  }
-
-  // Process the event
-  try {
-    await dbConnect();
-
-    switch (event.type) {
-      case "checkout.session.completed": {
-        const session = event.data.object;
-        const userId = session.metadata.userId;
-        const stripeCustomerId = session.customer;
-        const stripeSubscriptionId = session.subscription;
-
-        // Retrieve the subscription to extract plan info
-        const subscription = await stripe.subscriptions.retrieve(
-          stripeSubscriptionId
-        );
-        const plan = subscription.items.data[0].plan.nickname || "Unknown";
-
-        // Save/update subscription info in our database
-        await Subscription.findOneAndUpdate(
-          { userId },
-          {
-            userId,
-            stripeCustomerId,
-            stripeSubscriptionId,
-            plan,
-            status: "active",
-          },
-          { upsert: true }
-        );
-
-        // Update user's plan in our user model
-        await userModel.findOneAndUpdate(
-          { clerkId: userId },
-          { plan: plan.toLowerCase() }
-        );
-
-        console.log(`✅ Subscription for user ${userId} activated!`);
-        break;
-      }
-
-      case "invoice.payment_succeeded": {
-        const invoice = event.data.object;
-        const subscriptionId = invoice.subscription;
-
-        // Find our subscription record     
-        const subscriptionRecord = await Subscription.findOne({ stripeSubscriptionId: subscriptionId });
-        if (!subscriptionRecord) {
-          console.error(`❌ Subscription not found for ID: ${subscriptionId}`);
-          break;
-        }
-        // Reset the user's request count on successful invoice payment\n
-        await userModel.findOneAndUpdate(
-          { clerkId: subscriptionRecord.userId },
-          {
-            requestCount: 0,
-          }
-        );
-        console.log(
-          `🔄 Request count reset for user: ${subscriptionRecord.userId}`
-        );
-        break;
-      }
-
-      case "customer.subscription.deleted": {
-        const subscriptionDeleted = event.data.object;
-        await Subscription.findOneAndUpdate(
-          { stripeSubscriptionId: subscriptionDeleted.id },
-          { status: "canceled" }
-        );
-        console.log("❌ Subscription canceled.");
-        break;
-      }
-
-      default:
-        console.log(`Unhandled event type: ${event.type}`);
-    }
-
-    return NextResponse.json({ received: true });
-  } catch (err) {
-    console.error("⚠️ Error handling webhook event:", err.message);
-    return NextResponse.json(
-      { error: "Webhook handler error" },
-      { status: 500 }
-    );
-  }
-}

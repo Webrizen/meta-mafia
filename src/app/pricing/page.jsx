@@ -1,49 +1,57 @@
-import Link from "next/link";
+'use client';
 
-const pricingPlans = [
-  {
-    name: "Basic",
-    price: "₹499/month",
-    features: ["Basic metadata generation", "Manual updates"],
-    stripePriceId: "price_1PjaWNSBcUwzODpLNpIBeddZ",
-  },
-  {
-    name: "Pro",
-    price: "₹999/month",
-    features: [
-      "AI-powered metadata",
-      "Auto-updates",
-      "Unlimited requests",
-    ],
-    stripePriceId: "price_1PjaYrSBcUwzODpLtlwEHplj",
-  },
-];
+import { useState, useEffect } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
 
-export default function page() {
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
+export default function Subscriptions() {
+  const [plans, setPlans] = useState([]);
+
+  useEffect(() => {
+    // Fetch subscription plans from your API
+    fetch('/api/stripe/subscription-plans')
+      .then(res => res.json())
+      .then(data => setPlans(data));
+  }, []);
+
+  const handleSubscribe = async (priceId) => {
+    const stripe = await stripePromise;
+    const { sessionId } = await fetch('/api/stripe/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ priceId }),
+    }).then(res => res.json());
+
+    const result = await stripe.redirectToCheckout({ sessionId });
+
+    if (result.error) {
+      console.error(result.error);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-      <h1 className="text-4xl font-bold mb-6">Choose Your Plan</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {pricingPlans.map((plan) => (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
+      <h1 className="text-4xl font-bold text-gray-800 mb-8">Choose a Subscription Plan</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {plans.map(plan => (
           <div
-            key={plan.name}
-            className="bg-white p-6 rounded-2xl shadow-lg text-center"
+            key={plan.id}
+            className="bg-white shadow-md rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-300"
           >
-            <h2 className="text-2xl font-bold mb-2">{plan.name}</h2>
-            <p className="text-xl mb-4">{plan.price}</p>
-            <ul className="mb-4 space-y-2">
-              {plan.features.map((feature) => (
-                <li key={feature} className="text-gray-600">
-                  ✅ {feature}
-                </li>
-              ))}
-            </ul>
-            <Link
-              href={`/subscribe?priceId=${plan.stripePriceId}`}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+            <h2 className="text-2xl font-semibold text-gray-700 mb-2">{plan.name}</h2>
+            <p className="text-gray-600 mb-4">{plan.description}</p>
+            <p className="text-lg font-medium text-gray-800 mb-4">
+              Price: <span className="text-indigo-600">${plan.price / 100}</span> / {plan.interval}
+            </p>
+            <button
+              onClick={() => handleSubscribe(plan.price_id)}
+              className="w-full bg-indigo-600 text-white py-2 px-4 cursor-pointer rounded-lg hover:bg-indigo-700 transition-colors duration-300"
             >
-              Subscribe Now
-            </Link>
+              Subscribe
+            </button>
           </div>
         ))}
       </div>
