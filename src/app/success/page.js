@@ -49,7 +49,7 @@ function SuccessPage() {
       }
 
       setStatus(session.status || 'unknown');
-      setCustomerEmail(session.customer_email || '');
+      setCustomerEmail(session.customer_details.email || '');
     } catch (err) {
       setStatus('failed');
       console.error('Error fetching session status:', err);

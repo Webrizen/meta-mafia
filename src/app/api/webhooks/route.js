@@ -45,6 +45,11 @@ export async function POST(req) {
     })
   }
 
+
+  const { id } = evt.data
+  const eventType = evt.type
+  const data = evt.data
+
    // 🔥 Handle signups (optional, add defaults)
    if (eventType === "user.created") {
     await clerkClient.users.updateUserMetadata(data.id, {
@@ -63,9 +68,6 @@ export async function POST(req) {
   }
 
 
-  // For this guide, log payload to console
-  const { id } = evt.data
-  const eventType = evt.type
   console.log(`Received webhook with ID ${id} and event type of ${eventType}`)
   console.log('Webhook payload:', body)
 
