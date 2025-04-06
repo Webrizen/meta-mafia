@@ -1,11 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
-export default function Subscriptions() {
+export default function page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Subscriptions />
+    </Suspense>
+  );
+}
+
+function Subscriptions() {
   const [plans, setPlans] = useState([]);
 
   useEffect(() => {

@@ -1,10 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function SuccessPage() {
+export default function page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SuccessPage />
+    </Suspense>
+  );
+}
+
+function SuccessPage() {
   const [status, setStatus] = useState('loading');
   const [customerEmail, setCustomerEmail] = useState('');
   const searchParams = useSearchParams();
