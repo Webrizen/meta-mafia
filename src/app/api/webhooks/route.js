@@ -1,6 +1,6 @@
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { clerkClient } from '@clerk/nextjs/dist/types/server';
 
 export async function POST(req) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET
@@ -52,19 +52,24 @@ export async function POST(req) {
 
    // 🔥 Handle signups (optional, add defaults)
    if (eventType === "user.created") {
-    await clerkClient.users.updateUserMetadata(data.id, {
-      publicMetadata: { plan: "free" },
-      privateMetadata: {
-        requestCount: 0,
-      },
-    });
-    console.log("User initialized with default metadata.");
-  }
-
-  // 🔥 Handle deletion (optional)
-  if (eventType === "user.deleted") {
-    console.log("User deleted:", data.id);
-    // optionally log, cleanup, etc.
+    try {
+      console.log("Attempting to update user metadata for:", data.id);
+      console.log("ClerkClient status:", !!clerkClient);
+      
+      await clerkClient.users.updateUserMetadata(data.id, {
+        publicMetadata: { plan: "free" },
+        privateMetadata: {
+          requestCount: 0,
+        },
+      });
+      console.log("User initialized with default metadata.");
+    } catch (error) {
+      console.error("Clerk error details:", error);
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
   }
 
 
