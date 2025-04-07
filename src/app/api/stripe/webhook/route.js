@@ -50,7 +50,8 @@ async function handleSubscriptionUpdated(subscription) {
   }
 
   // 2. Update Clerk user metadata
-  await clerkClient.users.updateUserMetadata(clerkUserId, {
+  const client = await clerkClient();  
+  await client.users.updateUserMetadata(clerkUserId, {
     publicMetadata: {
       subscriptionStatus: subscriptionStatus,
       subscriptionId: subscription.id,
@@ -67,8 +68,8 @@ async function handleSubscriptionDeleted(subscription) {
   const clerkUserId = customer.metadata?.clerkUserId;
 
   if (!clerkUserId) return;
-
-  await clerkClient.users.updateUserMetadata(clerkUserId, {
+  const client = await clerkClient();  
+  await client.users.updateUserMetadata(clerkUserId, {
     publicMetadata: {
       subscriptionStatus: "canceled",
     },
