@@ -50,7 +50,7 @@ async function handleSubscriptionUpdated(subscription) {
   }
 
   // 2. Update Clerk user metadata
-  const clerkData = await clerkClient.users.updateUserMetadata(clerkUserId, {
+  await clerkClient.users.updateUserMetadata(clerkUserId, {
     publicMetadata: {
       subscriptionStatus: subscriptionStatus,
       subscriptionId: subscription.id,

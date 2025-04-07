@@ -1,6 +1,6 @@
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
-import { clerkClient } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 
 export async function POST(req) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET
@@ -49,6 +49,7 @@ export async function POST(req) {
   const { id } = evt.data
   const eventType = evt.type
   const data = evt.data
+  const { userId } = await auth();
 
    // 🔥 Handle signups (optional, add defaults)
    if (eventType === "user.created") {
@@ -56,7 +57,7 @@ export async function POST(req) {
       console.log("Attempting to update user metadata for:", data.id);
       console.log("ClerkClient status:", !!clerkClient);
       
-      await clerkClient.users.updateUserMetadata(data.id, {
+      await clerkClient.users.updateUserMetadata(userId, {
         publicMetadata: { plan: "free" },
         privateMetadata: {
           requestCount: 0,
