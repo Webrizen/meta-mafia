@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
+import { NextResponse } from "next/server";
+import Stripe from "stripe";
 import { clerkClient } from "@clerk/nextjs/server";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -7,25 +7,28 @@ const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(request) {
   const body = await request.text();
-  const sig = request.headers.get('stripe-signature');
+  const sig = request.headers.get("stripe-signature");
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
   } catch (err) {
-    console.error('Error verifying webhook signature:', err);
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+    console.error("Error verifying webhook signature:", err);
+    return NextResponse.json(
+      { error: `Webhook Error: ${err.message}` },
+      { status: 400 }
+    );
   }
 
   // Handle the event
   switch (event.type) {
-    case 'customer.subscription.updated':
+    case "customer.subscription.updated":
       await handleSubscriptionUpdated(event.data.object);
       break;
-    case 'customer.subscription.deleted':
+    case "customer.subscription.deleted":
       await handleSubscriptionDeleted(event.data.object);
       break;
-    case 'invoice.payment_succeeded':
+    case "invoice.payment_succeeded":
       await handleInvoicePaid(event.data.object);
       break;
     // ... handle other events
@@ -50,7 +53,7 @@ async function handleSubscriptionUpdated(subscription) {
   }
 
   // 2. Update Clerk user metadata
-  const client = await clerkClient();  
+  const client = await clerkClient();
   await client.users.updateUserMetadata(clerkUserId, {
     publicMetadata: {
       subscriptionStatus: subscriptionStatus,
@@ -60,7 +63,9 @@ async function handleSubscriptionUpdated(subscription) {
     },
   });
 
-  console.log(`[Stripe] Updated Clerk user ${clerkUserId} with subscription ${subscription.id}`);
+  console.log(
+    `[Stripe] Updated Clerk user ${clerkUserId} with subscription ${subscription.id}`
+  );
 }
 
 async function handleSubscriptionDeleted(subscription) {
@@ -68,7 +73,7 @@ async function handleSubscriptionDeleted(subscription) {
   const clerkUserId = customer.metadata?.clerkUserId;
 
   if (!clerkUserId) return;
-  const client = await clerkClient();  
+  const client = await clerkClient();
   await client.users.updateUserMetadata(clerkUserId, {
     publicMetadata: {
       subscriptionStatus: "canceled",
@@ -85,10 +90,16 @@ async function handleInvoicePaid(invoice) {
 
   if (!clerkUserId) return;
 
+  const client = await clerkClient();
+  await client.users.updateUserMetadata(clerkUserId, {
+    privateMetadata: {
+      requestCount: 0,
+    },
+  });
+
   // Optional: add payment history or flags in metadata
   console.log(`[Stripe] Payment succeeded for user ${clerkUserId}`);
 }
-
 
 export const config = {
   api: {
