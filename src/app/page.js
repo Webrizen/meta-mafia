@@ -9,10 +9,10 @@ export default function Home() {
   return (
     <>
       <section className="relative">
-        <div className="bg-gradient-to-r from-[#4338ca] via-[#6366f1] to-[#a5b4fc] w-[400px] h-[400px] md:blur-[190px] blur-[9990px] absolute top-0 left-0" />
-        <div className="bg-gradient-to-r from-[#2dd4bf]  to-[#1f2937] w-[400px] h-[400px] md:blur-[190px] blur-[9990px] absolute bottom-0 right-0" />
-        <Image src={HeroPlane} width={500} height={500} className="absolute md:top-[15%] top-10 md:left-[35%] left-[40%] md:h-[100px] h-[50px] w-auto" placeholder="blur" />
-        <Image src={HeroBox} width={500} height={500} className="absolute md:bottom-[15%] bottom-5 md:left-[48.7%] left-[45%] h-[40px] w-auto dark:bg-transparent bg-indigo-50 rounded-full border border-slate-300 dark:border-none dark:rounded-none" />
+        <div className="bg-gradient-to-r from-[#4338ca] via-[#6366f1] to-[#a5b4fc] w-[400px] h-[400px] md:blur-[190px] blur-[9990px] absolute top-0 left-0 md:opacity-100 opacity-35 pointer-events-none" />
+        <div className="bg-gradient-to-r from-[#2dd4bf]  to-[#1f2937] w-[400px] h-[400px] md:blur-[190px] blur-[9990px] absolute bottom-0 right-0 md:opacity-100 opacity-35 pointer-events-none" />
+        <Image src={HeroPlane} alt="Hero Image" width={500} height={500} className="absolute md:top-[15%] top-10 md:left-[35%] left-[40%] md:h-[100px] h-[50px] w-auto" placeholder="blur" />
+        <Image src={HeroBox} alt="Hero Image" width={500} height={500} className="absolute md:bottom-[15%] bottom-5 md:left-[48.7%] left-[45%] h-[40px] w-auto dark:bg-transparent bg-indigo-50 rounded-full border border-slate-300 dark:border-none dark:rounded-none" />
         <div className="container mx-auto py-24 lg:py-32">
           <div className="flex justify-center">
             <Link
