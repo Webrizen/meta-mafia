@@ -41,13 +41,8 @@ export default function Testimonials() {
   return (
     <>
       <section className="w-full relative bg-gradient-to-b dark:from-zinc-950 from-white to-zinc-50 dark:to-zinc-900 py-20 px-6 lg:px-32 text-white">
-      <Squares
-        speed={0.5}
-        squareSize={20}
-        direction="diagonal"
-        borderColor="#fff"
-        hoverFillColor="#222"
-      />
+      <div className="bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-200 w-[400px] h-[400px] md:blur-[190px] blur-[9990px] absolute top-0 left-0 md:opacity-100 opacity-35 pointer-events-none" />
+      <div className="bg-gradient-to-r from-rose-500  to-rose-100 w-[400px] h-[400px] md:blur-[190px] blur-[9990px] absolute bottom-0 right-0 md:opacity-100 opacity-35 pointer-events-none" />
         <div className="max-w-6xl mx-auto z-20 relative">
           <h2 className="text-4xl font-bold mb-10 md:text-right text-center dark:text-white text-black">
             🫣 What People Are Saying?

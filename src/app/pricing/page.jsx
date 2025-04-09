@@ -67,7 +67,7 @@ function Subscriptions() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8">Choose a Subscription Plan</h1>
+      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center md:mx-0 mx-4">Choose a Subscription Plan</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 w-full max-w-7xl">
         {loading
           ? Array.from({ length: 3 }).map((_, i) => (

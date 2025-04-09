@@ -169,7 +169,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="py-6 px-4 relative">
+      <section className="py-6 px-4 relative" id="features">
         <div className="max-w-6xl mx-auto">
           {/* Animated SVG Connection Lines */}
           <svg

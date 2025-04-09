@@ -28,7 +28,7 @@ const Navbar = () => {
   const { setTheme, theme } = useTheme();
   const links = [
     {
-      href: "/features",
+      href: "/#features",
       title: "Features",
       description: "Explore Metamafia’s metadata automation capabilities.",
     },
@@ -39,12 +39,12 @@ const Navbar = () => {
         "Learn how to integrate Metamafia into your Next.js projects.",
     },
     {
-      href: "/blog",
+      href: "https://webrizen.vercel.app/blogs",
       title: "Blog",
       description: "Stay updated with the latest SEO and metadata trends.",
     },
   ];
-  const { isSignedIn } = useAuth()
+  const { isSignedIn } = useAuth();
   return (
     <header className="p-2 bg-[rgba(225,225,225,0.1)] backdrop-blur-3xl sticky top-0 z-50">
       <div className="md:max-w-7xl mx-auto flex justify-between items-center">
@@ -133,7 +133,7 @@ const Navbar = () => {
         </nav>
 
         <div className="w-full flex justify-end items-center gap-2">
-        {isSignedIn ? (
+          {isSignedIn ? (
             <UserButton />
           ) : (
             <Button
@@ -195,6 +195,35 @@ const Navbar = () => {
                     </p>
                   </Link>
                 ))}
+                <Link
+                  href="/pricing"
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 dark:hover:bg-[rgba(225,225,225,0.1)]"
+                >
+                  <div className="text-sm font-medium leading-none">
+                    Pricing
+                  </div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Explore our pricing plans and choose the best one for you.
+                  </p>
+                </Link>
+                <Link
+                  href="/about"
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 dark:hover:bg-[rgba(225,225,225,0.1)]"
+                >
+                  <div className="text-sm font-medium leading-none">About</div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Learn more about Metamafia and our mission.
+                  </p>
+                </Link>
+                <Link
+                  href="/contact"
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 dark:hover:bg-[rgba(225,225,225,0.1)]"
+                >
+                  <div className="text-sm font-medium leading-none">Contact</div>
+                  <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                    Get in touch with us for any inquiries or support.
+                  </p>
+                </Link>
               </nav>
             </SheetContent>
           </Sheet>

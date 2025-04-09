@@ -4,6 +4,7 @@ import Navbar from "@/components/system/navbar";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
+import Footer from "@/components/system/footer";
 
 const dM_Sans = DM_Sans({
   weights: ["100", "200", "300", "400", "500", "600", "800", "900", "1000"],
@@ -39,11 +40,12 @@ export default function RootLayout({ children, session }) {
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <body className={`${dM_Sans.className} antialiased`}>
+        <body className={`${dM_Sans.className} antialiased scroll-smooth`}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Navbar />
             {children}
             <Toaster />
+            <Footer />
           </ThemeProvider>
         </body>
       </html>
