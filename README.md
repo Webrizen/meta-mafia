@@ -1,68 +1,35 @@
+# MetaMafia · Next.js SEO Automation
 
-### 🎯 **Goal Recap:**  
-- Build APIs for generating metadata.
-- Add subscription/payment logic.
-- Integrate with the frontend seamlessly.
+**MetaMafia** automates the addition of AI-generated SEO metadata, `manifest.json`, and `robots.txt` to your Next.js 15 apps.
+
+No copy-pasting. No guessing. Just plug in a document ID and optimize your app instantly.
 
 ---
 
-## 🛠️ **Backend Plan**
+## 🚀 Features
 
-### 1. **Core API Structure**
-- **Framework:** Next.js API Routes (Fast, No Extra Setup).
-- **Folder Structure:**
+- ✅ Fetches metadata automatically from **MetaMafia API** using `documentId`
+- ✅ Injects AI-generated metadata into `app/layout.js` or `src/app/layout.js`
+- ✅ Creates `manifest.json` and `robots.txt` inside the `public/` directory
+- ✅ Fully compatible with **Next.js 15 (App Router)** and modern web apps
+
+---
+
+## Getting Started
+
+1. Clone the repo
+2. Set up your `.env` using the example
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Run locally:
+   ```bash
+   npm run dev
+   ```
+
+## License
+
 ```
-/api
-├── /auth
-│   └── login.js (NextAuth config)
-├── /metadata
-│   ├── generate.js (Form data → Basic metadata)
-│   └── ai-generate.js (AI-powered metadata generation)
-├── /user
-│   └── profile.js (Get user plan, usage)
-└── /payment
-    ├── subscribe.js (Create subscription)
-    └── webhook.js (Stripe webhook for payment status)
+MIT
 ```
-
----
-
-### 2. **Authentication & User Management**
-- **NextAuth.js:** Google/GitHub OAuth.
-- **User Schema:**
-```js
-{
-  _id: ObjectId,
-  email: String,
-  plan: "free" | "pro",
-  apiUsage: Number,
-  createdAt: Date,
-}
-```
-
----
-
-### 3. **Metadata Generation APIs**
-✅ **/api/metadata/generate.js**  
-- Input: Site URL + Manual Data.  
-- Output: robots.txt, sitemap.xml, manifest.json.  
-
-✅ **/api/metadata/ai-generate.js** (Pro Plan)  
-- Input: Site URL.  
-- Process: Crawl site → Analyze content → Generate AI-enriched metadata.  
-- Output: AI-enhanced metadata JSON.  
-
----
-
-### 4. **Payment & Subscription Logic**
-✅ **Stripe Integration**
-- One-time Payment (Launch Plan)
-- Subscription Later (Scale Plan)
-- **Webhooks:** To auto-update user plans after payment.
-
----
-
-### 5. **Admin & Dashboard APIs**
-- **/api/user/profile.js:** Get user profile + plan.
-- **/api/payment/subscribe.js:** Create payment session.
-- **/api/payment/webhook.js:** Handle payment confirmations.
