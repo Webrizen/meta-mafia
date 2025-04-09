@@ -71,14 +71,14 @@ export default function AuthLayout({ children }) {
                 <p className="px-8 text-center text-sm text-muted-foreground sm:w-[320px] mx-auto z-30">
                   By clicking continue, you agree to our{" "}
                   <Link
-                    href="/terms-and-conditions"
+                    href="https://webrizen.dev/terms-of-service"
                     className="underline underline-offset-4 hover:text-primary"
                   >
                     Terms of Service
                   </Link>{" "}
                   and{" "}
                   <Link
-                    href="/privacy-policy"
+                    href="https://webrizen.dev/privacy-policy"
                     className="underline underline-offset-4 hover:text-primary"
                   >
                     Privacy Policy
